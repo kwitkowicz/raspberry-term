@@ -10,12 +10,11 @@ class TempLogger(threading.Thread):
     isRunning = True
 
     def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None, interval = 5):
+                 args=(), kwargs=None, verbose=None, interval = 5, in_memory_db = True):
         threading.Thread.__init__(self, group=group, target=target, name=name,
                                   verbose=verbose)
-        #self.args = args
-        #self.kwargs = kwargs
         self.conn = None
+        self.in_memory_db = in_memory_db
         self.last_measurement = None
         self.interval = interval
         self._setup()
@@ -87,11 +86,15 @@ ProgrammingError: SQLite objects created in a thread can only be used in that sa
             
 
     def start_db(self):
-        self.conn = sqlite3.connect(":memory:",check_same_thread=False)
-        cur = self.conn.cursor()
-        cur.execute("CREATE TABLE sensor_data(id Integer Primary Key, created_at timestamp, humidity real, temperature real, dew_point real)")
-        cur.close()
-        self.conn.commit()
+        if self.in_memory_db:
+            self.conn = sqlite3.connect(":memory:",check_same_thread=False)
+            cur = self.conn.cursor()
+            cur.execute("CREATE TABLE sensor_data(id Integer Primary Key, created_at timestamp, humidity real, temperature real, dew_point real)")
+            cur.close()
+            self.conn.commit()
+        else:
+            self.conn = sqlite3.connect("logger.db",check_same_thread=False)
+        
        
     def stop_db(self):
         """
