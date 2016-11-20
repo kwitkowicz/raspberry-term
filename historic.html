@@ -9,7 +9,7 @@
 		var chart; 
 
 		function getData(){
-			$.getJSON('http://192.168.0.51:8080/get_historical_data?start_date=2015-10-18 21:56:12', function(data){
+			$.getJSON('/get_historical_data?start_date=2016-10-18 21:56:12&stop_date=', function(data){
 				var series = [{
 					name: 'Temperature (\u00B11.0\u00B0C)',
 					type: 'spline',

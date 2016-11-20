@@ -49,7 +49,6 @@ ProgrammingError: SQLite objects created in a thread can only be used in that sa
         cur.execute("Insert into sensor_data(created_at, humidity, temperature, dew_point) values(?,?,?,?)",(now,humidity,temp,dew_point))
         print "taken at {0}\nhumidity: {1}\ntemperature: {2}\ndew_point: {3}".format(now,humidity,temp,dew_point)
 
-
     def get_last_measurement(self):
         if len(self.last_measurement) == 4:
             self.last_measurement[0]=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -73,9 +72,15 @@ ProgrammingError: SQLite objects created in a thread can only be used in that sa
             result.append(row)
         return result
 
-    def get_archival_data(self,date_from):
+    def get_archival_data(self,date_from, date_to):
         cur = self.conn.cursor()
-        cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? order by created_at DESC",(date_from,)) 
+        if date_to is None:
+            print "to is none"
+            cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? order by created_at DESC",(date_from,)) 
+        else:
+            print "to is not none"
+            cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? AND created_at < ? order by created_at DESC",
+                    (date_from,date_to)) 
         result = []
         while True:
             row = cur.fetchone()
@@ -84,7 +89,6 @@ ProgrammingError: SQLite objects created in a thread can only be used in that sa
             result.append(row)
         return result
             
-
     def start_db(self):
         if self.in_memory_db:
             self.conn = sqlite3.connect(":memory:",check_same_thread=False)
@@ -94,7 +98,6 @@ ProgrammingError: SQLite objects created in a thread can only be used in that sa
             self.conn.commit()
         else:
             self.conn = sqlite3.connect("logger.db",check_same_thread=False)
-        
        
     def stop_db(self):
         """
