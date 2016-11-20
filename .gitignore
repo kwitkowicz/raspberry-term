@@ -1,0 +1,5 @@
+Adafruit_Python_DHT
+tags
+*.db
+*.py[co]
+*.sw[op]

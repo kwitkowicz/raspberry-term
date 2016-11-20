@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+		<script type="text/javascript">
+		var chart; 
+		
+		function getData(){
+			$.getJSON('/plot', function(data) {
+				console.log("getjson");
+
+			var series  = chart.series[0],
+			shift = series.data.length > 30;
+			console.log(data[0]);
+			console.log(data[2]);
+			x = new Date(data[0]).getTime();
+			chart.series[0].addPoint([x, data[2]], true, shift);
+			chart.series[1].addPoint([x, data[1]], true, shift);
+			chart.series[2].addPoint([x, data[3]], true, shift);
+
+			setTimeout(getData, 2000);
+			});
+		}
+		</script>
+
+		<script type="text/javascript">
+		$(document).ready(function() {
+			chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'container',
+				defaultSeriesType: 'spline',
+				events: {
+					load: getData
+				}
+			},
+			title: {
+				text: 'DHT11 current values'
+			},
+			xAxis: {
+				type: 'datetime',
+				tickPixelInterval: 150,
+				maxZoom: 20 *1000 ,
+				title: {
+				text: 'Time (sensor called at one second intervals)',
+				margin: 15
+				}
+			},
+			yAxis: [{
+				minPadding: 0.2,
+				maxPadding: 0.2,
+				min: 0.0,
+				max: 50.0,
+				title: {
+					text: 'Temperature \u00B0C',
+				margin: 15
+				}
+			},
+			{
+			
+				minPadding: 0.2,
+				maxPadding: 0.2,
+				min: 20.0,
+				max: 90.0,
+				title: {
+					text: 'Humidity \u0025RH',
+					margin: 15
+				},
+				opposite: true
+        	
+			},
+			{
+				minPadding: 0.2,
+				maxPadding: 0.2,
+				title: {
+					text: 'Dew Point \u00B0C',
+					margin: 15
+				},
+				opposite: true
+        	
+			}],
+			series: [{
+				name: 'DHT11 sensor temperature (\u00B11.0\u00B0C)',
+				yAxis: 0,
+				data: []
+			},
+			{	name: 'DHT11 sensor humidity (\u00B14.0\u0025RH)',
+				yAxis: 1,
+				data: []	
+			},
+			{	name: 'Estimated dew point (\u00B0C)',
+				type: 'column',
+				yAxis: 2,
+				data: []	
+				},
+				]
+			});        
+		});
+		</script>			
+	</head>
+
+	<body>
+		<div id="container" style="width: 100%; height: 400px"></div>
+
+	</body>
+</html>
