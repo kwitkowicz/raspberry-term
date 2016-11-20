@@ -76,10 +76,10 @@ ProgrammingError: SQLite objects created in a thread can only be used in that sa
         cur = self.conn.cursor()
         if date_to is None:
             print "to is none"
-            cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? order by created_at DESC",(date_from,)) 
+            cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? order by created_at ASC",(date_from,)) 
         else:
             print "to is not none"
-            cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? AND created_at < ? order by created_at DESC",
+            cur.execute("select created_at, humidity, temperature, dew_point from sensor_data WHERE created_at > ? AND created_at < ? order by created_at ASC",
                     (date_from,date_to)) 
         result = []
         while True:
