@@ -12,7 +12,7 @@ class TempServer(object):
         return open('index.html')
 
     @cherrypy.expose
-    def historic(self):
+    def historic(self, *args, **kwargs):
         return open('historic.html')
 
     @cherrypy.expose
@@ -23,8 +23,10 @@ class TempServer(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def get_historical_data(self, start_date, stop_date):
-        if stop_date == '':
+        if stop_date == '' or stop_date == 'null':
             stop_date = None
+        if start_date == '' or start_date == 'null':
+            start_date = None
         return self.logger.get_archival_data(start_date, stop_date)
 
     def run_background_task(self):

@@ -72,10 +72,20 @@ class TempLogger(threading.Thread):
 
     def get_archival_data(self, date_from, date_to):
         cur = self.conn.cursor()
-        if date_to is None:
+        print date_from
+        print date_to
+        if date_to is None and date_from is not None:
             cur.execute("""select created_at, humidity, temperature,
                         dew_point from sensor_data WHERE created_at > ?
                         order by created_at ASC""", (date_from, ))
+        elif date_to is not None and date_from is None:
+            cur.execute("""select created_at, humidity, temperature,
+                        dew_point from sensor_data WHERE created_at < ?
+                        order by created_at ASC""", (date_to, ))
+        elif date_to is None and date_from is None:
+            cur.execute("""select created_at, humidity, temperature,
+                        dew_point from sensor_data
+                        order by created_at ASC""" )
         else:
             cur.execute("""select created_at, humidity, temperature, dew_point
                         from sensor_data WHERE created_at > ? AND
