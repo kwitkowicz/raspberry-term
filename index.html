@@ -43,7 +43,7 @@
 				tickPixelInterval: 150,
 				maxZoom: 20 *1000 ,
 				title: {
-				text: 'Time (sensor called at one second intervals)',
+				text: 'Time (sensor called at five seconds intervals)',
 				margin: 15
 				}
 			},
@@ -80,21 +80,31 @@
 				opposite: true
         	
 			}],
+				plotOptions: {
+					line: {
+						dataLabels: {
+							enabled: true
+						}
+					}
+				},
 			series: [{
 				name: 'DHT11 sensor temperature (\u00B11.0\u00B0C)',
+				type: 'spline',
 				yAxis: 0,
 				data: []
 			},
 			{	name: 'DHT11 sensor humidity (\u00B14.0\u0025RH)',
+				type: 'spline',
 				yAxis: 1,
 				data: []	
 			},
 			{	name: 'Estimated dew point (\u00B0C)',
-				type: 'column',
+				type: 'spline',
+				dashStyle: 'shortdot',
 				yAxis: 2,
-				data: []	
-				},
-				]
+				data: [],
+			},
+			]
 			});        
 		});
 		</script>			
