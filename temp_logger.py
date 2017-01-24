@@ -4,6 +4,7 @@ import datetime
 import sqlite3
 import math
 import Adafruit_DHT
+import sys
 
 
 class TempLogger(threading.Thread):
@@ -72,8 +73,6 @@ class TempLogger(threading.Thread):
 
     def get_archival_data(self, date_from, date_to):
         cur = self.conn.cursor()
-        print date_from
-        print date_to
         if date_to is None and date_from is not None:
             cur.execute("""select created_at, humidity, temperature,
                         dew_point from sensor_data WHERE created_at > ?
@@ -85,7 +84,7 @@ class TempLogger(threading.Thread):
         elif date_to is None and date_from is None:
             cur.execute("""select created_at, humidity, temperature,
                         dew_point from sensor_data
-                        order by created_at ASC""" )
+                        order by created_at ASC""")
         else:
             cur.execute("""select created_at, humidity, temperature, dew_point
                         from sensor_data WHERE created_at > ? AND
@@ -117,10 +116,15 @@ thread id 4532
             self.conn = sqlite3.connect("logger.db", check_same_thread=False)
 
     def stop_db(self):
+        if not self.in_memory_db:
+            self.conn.commit()
         self.conn.close()
 
 if __name__ == '__main__':
-    m = TempLogger()
+    in_memory = True
+    if len(sys.argv) > 1 and sys.argv[1] == '-f':
+        in_memory = False
+    m = TempLogger(in_memory_db=in_memory)
     m.start()
     time.sleep(5)
     print m.get_last_measurement()

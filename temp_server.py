@@ -1,11 +1,12 @@
 import cherrypy
+import sys
 from temp_logger import TempLogger
 
 
 class TempServer(object):
 
-    def __init__(self):
-        self.logger = TempLogger()
+    def __init__(self, in_memory_db=True):
+        self.logger = TempLogger(in_memory_db=in_memory_db)
 
     @cherrypy.expose
     def index(self):
@@ -36,6 +37,10 @@ class TempServer(object):
         self.logger.stop()
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == '-f':
+        in_memory = False
+    else:
+        in_memory = True
     global_config = {
             'global': {
                 'server.socket_host': '0.0.0.0',
@@ -46,7 +51,7 @@ if __name__ == '__main__':
                 'engine.SIGTERM': None
             }
             }
-    server = TempServer()
+    server = TempServer(in_memory_db=in_memory)
     print 'Server is running.'
     cherrypy.engine.subscribe('start', server.run_background_task)
     cherrypy.engine.subscribe('stop', server.stop_background_task)
