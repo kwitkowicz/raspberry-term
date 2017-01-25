@@ -1,4 +1,4 @@
-# DHTDynamicCharts
+# raspberry-term
 
 Database logger and web interface for DHT11 Sensor on Raspberry Pi 
 
