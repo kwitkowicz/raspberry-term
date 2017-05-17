@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Configuration</title>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<link rel="stylesheet" href="/resources/demos/style.css">
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script>
+			var x_data;
+			$(function() {
+				$("#save_configuration").on("click", function(){
+					$.ajax({
+						url: '/config/save_config',
+						type: 'POST',
+						contentType:'application/json',
+						data: JSON.stringify(x_data),
+						contentType: 'application/json',
+						dataType:'json'
+
+					});
+				});
+			});
+
+			function getData(){
+				$.getJSON('/config/get_config', function(data) {
+				$("#interval_spinner").spinner("value",data.interval);
+				x_data = data;
+				});
+			};
+
+			$(function() {
+				$('#interval_spinner').spinner({
+					min: 5,
+					max: 3600,
+				});
+				$("#interval_spinner").on("spinstop", function(){
+					     x_data.interval = $(this).spinner('value');
+					       
+				});
+				getData();
+			});
+		</script>
+	</head>
+	<body>
+		<p>
+			<label for="interval_spinner">Set an interval:</label>
+			<input id="interval_spinner" name="interval_value">
+		</p>
+		<p>
+			<button id="save_configuration">Save</button>
+		</p>
+	</body>
+</html>
